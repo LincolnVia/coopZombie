@@ -273,6 +273,14 @@ the embedded Xenos GPU microcode. Therefore:
   retained unchanged under `Extracted/`;
 - `Effect_Main.compat.fx` supplies a source-visible desktop compatibility
   effect;
+- its pixel shader applies the game's `Brightness`/`BrightnessAdj` controls and
+  a 0.68 desktop scene-exposure factor. This compensates for the compatibility
+  effect's simplified lighting while leaving SpriteBatch HUD and menu rendering
+  at full brightness;
+- fog-capable scene techniques interpolate camera-to-vertex distance and blend
+  from clear rendering at 500 world units to dark blue-gray fog at 3,000 units.
+  `F8` toggles the effect and `GlobalSettings.txt` persists `FogEnabled`; Basic,
+  minimap, depth, shadow-map, and weapon-scope techniques remain fog-free;
 - Windows `fxc.exe /T fx_2_0` compiles it to `Effect_Main.fxb`;
 - FNA's raw-effect fallback finds `.fxb` when the game calls
   `Content.Load<Effect>("Effect_Main")` and no `.xnb` exists in the output.
@@ -289,7 +297,8 @@ TextureMove, WeaponScope
 
 Most techniques currently share a basic Shader Model 3 vertex/pixel pass that
 transforms by `World * ViewProjection`, samples `BaseTexture`, applies
-`ColorAdjust`, `Emissive`, `AlphaAdjust`, `texAdj`, and optional alpha clipping.
+`ColorAdjust`, `Emissive`, `AlphaAdjust`, `texAdj`, optional alpha clipping, and
+for scene techniques, optional distance fog.
 
 Rigged player, arm, and zombie meshes require a distinct conversion. Their
 vertex declaration carries an unnormalized `Byte4` `BLENDINDICES0` at byte 48

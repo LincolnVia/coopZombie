@@ -7164,6 +7164,10 @@ public class MainGame
 				{
 					num3 = 9;
 				}
+				else if (array4[0].Equals("FogEnabled", StringComparison.OrdinalIgnoreCase))
+				{
+					num3 = 10;
+				}
 				switch (num3)
 				{
 				case 1:
@@ -7261,6 +7265,12 @@ public class MainGame
 						}
 					}
 					break;
+				case 10:
+					if (array4.Length > 1 && array4[1].Length > 0)
+					{
+						mainC.renderingMain.Set_Fog_Enabled(int.Parse(array4[1], CultureInfo.InvariantCulture.NumberFormat) == 1);
+					}
+					break;
 				}
 			}
 			if (global::Sounds.Sounds.soundSystemLoaded)
@@ -7291,6 +7301,8 @@ public class MainGame
 			if (isolatedStorageFileStream != null && isolatedStorageFileStream.CanWrite)
 			{
 				string text = "brightness\t" + string.Format(CultureInfo.InvariantCulture, "{0:F3}", new object[1] { global::Rendering.Rendering.brightness }) + "\r\n";
+				isolatedStorageFileStream.Write(mainC.utilMain.String_To_Byte_Array(text), 0, text.Length);
+				text = global::Rendering.Rendering.fogEnabled ? "FogEnabled\t1\r\n" : "FogEnabled\t0\r\n";
 				isolatedStorageFileStream.Write(mainC.utilMain.String_To_Byte_Array(text), 0, text.Length);
 				text = ((!global::Sounds.Sounds.soundEnabled[0]) ? "SoundEnabled\t0\r\n" : "SoundEnabled\t1\r\n");
 				isolatedStorageFileStream.Write(mainC.utilMain.String_To_Byte_Array(text), 0, text.Length);

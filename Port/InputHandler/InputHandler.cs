@@ -358,6 +358,12 @@ public class InputHandler
 
 	public void Handle_Game_Input(ref KeyboardState newState, ref KeyboardState oldState)
 	{
+		if (newState.IsKeyDown(Keys.F8) && oldState.IsKeyUp(Keys.F8))
+		{
+			mainC.renderingMain.Set_Fog_Enabled(!global::Rendering.Rendering.fogEnabled);
+			global::MainGame.MainGame.needToSavePlayerSettings = true;
+			Console.WriteLine("Distance fog: " + (global::Rendering.Rendering.fogEnabled ? "ON" : "OFF"));
+		}
 		if (global::MainGame.MainGame.debugRestart > 0)
 		{
 			global::MainGame.MainGame.debugRestart = 0;

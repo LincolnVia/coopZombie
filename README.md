@@ -31,6 +31,7 @@ original human developers.
   skinning for player and zombie models.
 - Single-player AI navigation and wave progression are operational in the
   current playtest path.
+- Press `F8` to toggle distance fog. The choice is saved in the global settings.
 - Rendering remains a compatibility baseline rather than a faithful recreation
   of all 23 original Xbox shader programs.
 - Multiplayer uses `FNA.NetStub`; Xbox Live services are not implemented.
@@ -61,6 +62,10 @@ The project expects extracted content under
 ignored and must never be committed. The native FNA DLLs are likewise local
 dependencies; consult [PORTING.md](PORTING.md) for the tested layout and exact
 effect-compilation command.
+
+## Port controls
+
+- `F8`: toggle distance fog on or off
 
 ## Licensing and third-party rights
 

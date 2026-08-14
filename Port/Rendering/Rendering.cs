@@ -67,6 +67,12 @@ public class Rendering
 
 	public static bool renderMinimap = true;
 
+	public static bool fogEnabled = false;
+
+	public const float fogStart = 500f;
+
+	public const float fogEnd = 3000f;
+
 	public static bool miniMapStaticTexture = false;
 
 	public static bool moveViewToNewLocation = false;
@@ -1226,6 +1232,7 @@ public class Rendering
 			effect1.Parameters["ShadowMapTexture"].SetValue(shadowMapPlayer);
 		}
 		rGraphics.SamplerStates[0] = textureSamplerState;
+		effect1.Parameters["FogCameraPosition"].SetValue(camPos[rBufferID]);
 		effect1.Parameters["ViewProjection"].SetValue(matrixVP);
 		effect1.Parameters["World"].SetValue(matrixW);
 		rGraphics.SetVertexBuffer(mainVBO);
@@ -1759,6 +1766,7 @@ public class Rendering
 		renderTargetWorld = new RenderTarget2D(mainC.curGame.GraphicsDevice, mainC.curGame.presentationParameters.BackBufferWidth, mainC.curGame.presentationParameters.BackBufferHeight, mipMap: false, SurfaceFormat.Color, DepthFormat.Depth24Stencil8);
 		brightness = 0.5f;
 		Set_Brightness();
+		Set_Fog_Enabled(fogEnabled);
 		effect1.Parameters["AlphaAdjust"].SetValue(1f);
 		effect1.Parameters["PtLightDistance0"].SetValue(8192f);
 		far4[0] = 1f;
@@ -6797,6 +6805,15 @@ public class Rendering
 			effect1.Parameters["Brightness"].SetValue(value);
 			effect1.Parameters["BrightnessAdj"].SetValue(num);
 		}
+	}
+
+	public void Set_Fog_Enabled(bool enabled)
+	{
+		fogEnabled = enabled;
+		effect1.Parameters["FogEnabled"].SetValue(enabled);
+		effect1.Parameters["FogStart"].SetValue(fogStart);
+		effect1.Parameters["FogEnd"].SetValue(fogEnd);
+		effect1.Parameters["FogColor"].SetValue(new Vector4(0.055f, 0.07f, 0.08f, 1f));
 	}
 
 	public void Sync_Rendering_Variables()

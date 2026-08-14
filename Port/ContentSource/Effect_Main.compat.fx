@@ -23,6 +23,7 @@ texture ShadowMapMainTexture;
 texture Texture;
 
 bool clipTexture = false;
+bool FogEnabled = false;
 int Specular = 0;
 int numAmmoLights = 0;
 int numLevelLights = 0;
@@ -33,6 +34,10 @@ float AlphaAdjust = 1.0;
 float AmmoLightAdjust = 0.0;
 float Brightness = 1.0;
 float BrightnessAdj = 0.0;
+// The compatibility shader does not yet reproduce the Xbox lighting pipeline,
+// so unlit texture samples otherwise appear much brighter than the original.
+// Keep this below 1.0 while preserving the game's brightness slider range.
+static const float DesktopSceneExposure = 0.68;
 float CurrentTime = 0.0;
 float depth = 0.0;
 float Duration = 1.0;
@@ -45,6 +50,8 @@ float LaserLightDistance0 = 0.0;
 float offset = 0.0;
 float PtLightDistance0 = 8192.0;
 float TextureMultiplier = 1.0;
+float FogStart = 500.0;
+float FogEnd = 3000.0;
 float width = 1.0;
 
 float2 EndSize = float2(1.0, 1.0);
@@ -54,6 +61,7 @@ float2 texAdj = float2(0.0, 0.0);
 float2 ViewportScale = float2(1.0, 1.0);
 
 float3 cameraDir = float3(0.0, 0.0, 1.0);
+float3 FogCameraPosition = float3(0.0, 0.0, 0.0);
 float3 dLightDir = float3(0.0, 0.0, -1.0);
 float3 Gravity = float3(0.0, 0.0, 0.0);
 float3 LaserLight0 = float3(0.0, 0.0, 0.0);
@@ -66,6 +74,7 @@ float4 ColorAdjust = float4(1.0, 1.0, 1.0, 1.0);
 float4 dLightBounce = float4(0.0, 0.0, 0.0, 0.0);
 float4 dLightColor = float4(1.0, 1.0, 1.0, 1.0);
 float4 Emissive = float4(0.0, 0.0, 0.0, 0.0);
+float4 FogColor = float4(0.055, 0.070, 0.080, 1.0);
 float4 InstanceColor = float4(1.0, 1.0, 1.0, 1.0);
 float4 LaserLightColor0 = float4(0.0, 0.0, 0.0, 0.0);
 float4 MaxColor = float4(1.0, 1.0, 1.0, 1.0);
@@ -107,6 +116,7 @@ struct CompatVertexOutput
     float4 Position : POSITION0;
     float4 Color : COLOR0;
     float2 TexCoord : TEXCOORD0;
+    float FogDepth : TEXCOORD1;
 };
 
 CompatVertexOutput CompatVS(CompatVertexInput input)
@@ -116,6 +126,7 @@ CompatVertexOutput CompatVS(CompatVertexInput input)
     output.Position = mul(worldPosition, ViewProjection);
     output.Color = input.Color * ColorAdjust;
     output.TexCoord = input.TexCoord + texAdj;
+    output.FogDepth = distance(worldPosition.xyz, FogCameraPosition);
     return output;
 }
 
@@ -144,17 +155,31 @@ CompatVertexOutput CompatSkinnedVS(CompatVertexInput input)
     output.Position = mul(skinnedPosition, ViewProjection);
     output.Color = input.Color * ColorAdjust;
     output.TexCoord = input.TexCoord + texAdj;
+    output.FogDepth = distance(skinnedPosition.xyz, FogCameraPosition);
     return output;
 }
 
 float4 CompatPS(CompatVertexOutput input) : COLOR0
 {
     float4 color = tex2D(BaseSampler, input.TexCoord) * input.Color;
+    color.rgb = saturate(color.rgb * DesktopSceneExposure * Brightness + BrightnessAdj);
     color.rgb += Emissive.rgb;
     color.a *= AlphaAdjust;
     if (clipTexture)
     {
         clip(color.a - 0.01);
+    }
+    return color;
+}
+
+float4 CompatFogPS(CompatVertexOutput input) : COLOR0
+{
+    float4 color = CompatPS(input);
+    if (FogEnabled)
+    {
+        float fogRange = max(FogEnd - FogStart, 0.001);
+        float fogAmount = saturate((input.FogDepth - FogStart) / fogRange);
+        color.rgb = lerp(color.rgb, FogColor.rgb, fogAmount);
     }
     return color;
 }
@@ -179,22 +204,42 @@ float4 CompatPS(CompatVertexOutput input) : COLOR0
         } \
     }
 
+#define COMPAT_FOG_TECHNIQUE(name) \
+    technique name \
+    { \
+        pass P0 \
+        { \
+            VertexShader = compile vs_3_0 CompatVS(); \
+            PixelShader = compile ps_3_0 CompatFogPS(); \
+        } \
+    }
+
+#define COMPAT_FOG_SKINNED_TECHNIQUE(name) \
+    technique name \
+    { \
+        pass P0 \
+        { \
+            VertexShader = compile vs_3_0 CompatSkinnedVS(); \
+            PixelShader = compile ps_3_0 CompatFogPS(); \
+        } \
+    }
+
 COMPAT_TECHNIQUE(Basic)
 COMPAT_TECHNIQUE(BasicNonTextured)
-COMPAT_TECHNIQUE(Billboards)
-COMPAT_TECHNIQUE(ColorParticle)
-COMPAT_TECHNIQUE(Instancing)
+COMPAT_FOG_TECHNIQUE(Billboards)
+COMPAT_FOG_TECHNIQUE(ColorParticle)
+COMPAT_FOG_TECHNIQUE(Instancing)
 COMPAT_TECHNIQUE(InstancingSetDepth)
-COMPAT_TECHNIQUE(Main)
+COMPAT_FOG_TECHNIQUE(Main)
 COMPAT_SKINNED_TECHNIQUE(Matrrices)
-COMPAT_SKINNED_TECHNIQUE(Matrices)
-COMPAT_TECHNIQUE(MatrixInstancing)
+COMPAT_FOG_SKINNED_TECHNIQUE(Matrices)
+COMPAT_FOG_TECHNIQUE(MatrixInstancing)
 COMPAT_TECHNIQUE(MiniMap)
-COMPAT_TECHNIQUE(Particles)
-COMPAT_TECHNIQUE(Particles_Animation)
+COMPAT_FOG_TECHNIQUE(Particles)
+COMPAT_FOG_TECHNIQUE(Particles_Animation)
 COMPAT_TECHNIQUE(SetDepthBuffer)
 COMPAT_TECHNIQUE(ShadowMap)
 COMPAT_SKINNED_TECHNIQUE(ShadowMap_Matrix)
-COMPAT_TECHNIQUE(Terrain)
-COMPAT_TECHNIQUE(TextureMove)
+COMPAT_FOG_TECHNIQUE(Terrain)
+COMPAT_FOG_TECHNIQUE(TextureMove)
 COMPAT_TECHNIQUE(WeaponScope)
