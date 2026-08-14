@@ -6,8 +6,7 @@ renders skinned player/zombie models, converts Xbox collision and navigation
 data, and advances enemy waves.
 
 This repository does **not** contain the original Xbox package, executable,
-music, models, textures, maps, or other extracted game content. You must supply
-your own legally obtained dump. See [PORTING.md](PORTING.md) for the extraction,
+music, models, textures, maps, or other extracted game content. See [PORTING.md](PORTING.md) for the extraction,
 conversion, build, and debugging record.
 
 ## AI authorship disclosure
