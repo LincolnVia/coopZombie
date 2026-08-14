@@ -43,9 +43,6 @@ Requirements:
 
 - Windows x64
 - .NET 8 SDK
-- a legally obtained dump of the game
-- the native FNA libraries (`SDL3.dll`, `FNA3D.dll`, `FAudio.dll`, and
-  `libtheorafile.dll`)
 
 Clone with submodules:
 
