@@ -53,6 +53,7 @@ git clone --recurse-submodules https://github.com/LincolnVia/coopZombie.git
 cd coopZombie
 dotnet restore .\Port\TheCoOpZombieGame.csproj
 dotnet build .\Port\TheCoOpZombieGame.csproj
+.\setup-and-build.bat
 ```
 
 The project expects extracted content under
