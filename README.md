@@ -50,7 +50,7 @@ Requirements:
 Clone with submodules:
 
 ```powershell
-git clone --recurse-submodules <repository-url>
+git clone --recurse-submodules https://github.com/LincolnVia/coopZombie.git
 cd coopZombie-windows-port
 dotnet restore .\Port\TheCoOpZombieGame.csproj
 dotnet build .\Port\TheCoOpZombieGame.csproj
