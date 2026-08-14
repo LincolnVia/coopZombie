@@ -1,0 +1,32 @@
+# Personal Xbox dump and extracted copyrighted game content
+/originalDump/
+/Extracted/
+/Decompiled/
+
+# Local SDK/tool caches and downloaded binaries
+/.dotnet-cli/
+/tools/downloads/
+/tools/fnalibs/
+/tools/ilspy/
+/tools/CSO_Processor/XenosRecomp/
+/tools/CSO_Processor/definitions.h
+/tools/CSO_Processor/Effect_Main.*
+
+# Build products and playtest logs
+**/bin/
+**/obj/
+**/obj_core/
+*.a
+*.log
+
+# Original or derived binary game artifacts
+
+
+# Editor and operating-system files
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+Thumbs.db
+.DS_Store

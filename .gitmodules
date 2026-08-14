@@ -1,0 +1,6 @@
+[submodule "FNA.NetStub"]
+	path = FNA.NetStub
+	url = https://github.com/FNA-XNA/FNA.NetStub.git
+[submodule "tools/Extract-STFS"]
+	path = tools/Extract-STFS
+	url = https://github.com/jasonulbright/Extract-STFS.git

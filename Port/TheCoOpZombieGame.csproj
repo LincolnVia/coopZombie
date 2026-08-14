@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>TheCoOpZombieGame</AssemblyName>
+    <RootNamespace></RootNamespace>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FNA\FNA.Core.csproj" />
+    <ProjectReference Include="FNA.NetStub.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\Extracted\584E07D1\The_CoOp_Zombie_Game\**\*"
+             Exclude="..\Extracted\584E07D1\The_CoOp_Zombie_Game\Effect_Main.xnb">
+      <Link>The_CoOp_Zombie_Game\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ContentSource\Effect_Main.fxb">
+      <Link>The_CoOp_Zombie_Game\Effect_Main.fxb</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="..\tools\fnalibs\x64\*.dll">
+      <Link>%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>
