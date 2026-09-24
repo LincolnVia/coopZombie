@@ -8,7 +8,7 @@ pushd "%~dp0" || exit /b 1
 set "ILSPY_VERSION=9.1.0.7988"
 set "DOTNET_VERSION=8.0.301"
 set "FNALIBS_URL=https://nightly.link/FNA-XNA/fnalibs-dailies/workflows/ci.yml/main/fnalibs.zip"
-set "GAME_URL=https://archive.org/download/game_20260814/game"
+
 set "GAME_POS=OriginalDump\game"
 set "DOWNLOADS=%CD%\tools\downloads"
 set "FNALIBS_ZIP=%DOWNLOADS%\fnalibs.zip"
@@ -44,7 +44,7 @@ call :select_dotnet
 if errorlevel 1 goto :fail
 
 echo.
-curl.exe --fail --location --retry 3 --output "%GAME_POS%" "%GAME_URL%"
+
 
 
 
